@@ -1,12 +1,13 @@
 import sys
 
 # when we are executing this file directly, we can see the arguments passed to it
-# for example uv run 01-docker-terraform/docker-sql/pipeline/pipeline.py 12
+# need to be in teh directory where pipeline.py is located
+# for example uv run pipeline.py 12
 print('arguments:', sys.argv)
 
 # the first argument is always the file name
 # the second argument is the first argument passed to the script
-# arguments: ['01-docker-terraform/docker-sql/pipeline/pipeline.py', '12']
+# arguments: ['pipeline.py', '12']
 
 # so in this case, sys.argv[1] will be '12'
 print('\nfirst argument:', sys.argv[1])
@@ -33,4 +34,4 @@ print(df_month)
 
 
 # saving to parquet file inside pipeline folder
-df.to_parquet(f"01-docker-terraform/docker-sql/pipeline/output_{month}.parquet")
+df.to_parquet(f"output_{month}.parquet")
