@@ -91,18 +91,92 @@ Verify the data types:
 df.info()
 ```
 
+## Understanding Docker Networking 🌐
+
+Before connecting to PostgreSQL, it's crucial to understand Docker networking, especially on WSL.
+
+### Container-to-Container Communication (Recommended!)
+
+When both your application and database are **containers on the same Docker network**, they can communicate using container names:
+
+```python
+# ✅ Both containers on pg-network
+engine = create_engine("postgresql://root:root@pgdatabase:5432/ny_taxi")
+```
+
+**Benefits:**
+- Clean and simple
+- No localhost confusion
+- No WSL networking issues
+- Containers discover each other by `--name`
+- This is how pgAdmin connects to PostgreSQL!
+
+### Host-to-Container Communication (More Complex)
+
+When your **Python script runs on your WSL/host machine** and needs to connect to a **container**:
+
+```python
+# Option 1: Use host.docker.internal (may work on WSL)
+engine = create_engine("postgresql://root:root@host.docker.internal:5432/ny_taxi")
+
+# Option 2: Use localhost (if port is mapped with -p 5432:5432)
+engine = create_engine("postgresql://root:root@localhost:5432/ny_taxi")
+```
+
+### Why Networking is Tricky on WSL
+
+**The Problem:**
+- Your WSL environment has its own `localhost`
+- Docker containers have their own `localhost`
+- Windows host has its own `localhost`
+- These are **three different network namespaces!**
+
+**Why `localhost` often fails:**
+```
+WSL localhost ≠ Container localhost ≠ Windows localhost
+```
+
+**Why `host.docker.internal` can be unreliable on WSL:**
+- It's designed for Docker Desktop on Mac/Windows
+- WSL has nested virtualization (WSL → Docker → Container)
+- Sometimes it works, sometimes it doesn't depending on your Docker setup
+
+### Which Connection String Should You Use?
+
+| Scenario | Connection String | Notes |
+|----------|-------------------|-------|
+| **Containers on same network** | `pgdatabase:5432` | ✅ Best option - simple and reliable |
+| **WSL → Container (port mapped)** | `localhost:5432` | ⚠️ Only if `-p 5432:5432` is used |
+| **WSL → Container (no port map)** | `host.docker.internal:5432` | ⚠️ May not work on all WSL setups |
+| **Container IP directly** | `172.17.0.2:5432` | ⚠️ IP changes on restart |
+
+### Best Practice
+
+**If possible, run your ingestion script as a container** on the same network:
+```bash
+docker run --network=pg-network my-ingestion-script
+```
+
+This eliminates all WSL networking issues!
+
+---
+
 ## Step 3: Connect to PostgreSQL
 
-Create a connection engine using SQLAlchemy:
+For this tutorial, we're running the Python script on WSL (host), so we use:
 
 ```python
 from sqlalchemy import create_engine
 
-# For WSL, use host.docker.internal (see 03_postgres-docker.md for details)
+# From WSL host to container
 engine = create_engine("postgresql://root:root@host.docker.internal:5432/ny_taxi")
 ```
 
-**Important for WSL users:** Always use `host.docker.internal` instead of `localhost` when connecting from WSL to Docker containers.
+**Alternative for WSL if `host.docker.internal` doesn't work:**
+```python
+# Use localhost if you exposed the port with -p 5432:5432
+engine = create_engine("postgresql://root:root@localhost:5432/ny_taxi")
+```
 
 ## Step 4: Generate and Create Database Schema
 
@@ -225,8 +299,9 @@ FROM yellow_taxi_data;
 4. **Create schema separately** - Use `head(n=0).to_sql()` first, then append data
 5. **Monitor progress** - Use `tqdm` for long-running ingestions
 6. **Remember iterator behavior** - Iterators can only be consumed once
-7. **WSL networking** - Use `host.docker.internal` for container connections
-8. **Verify after ingestion** - Always check row counts and data quality
+7. **Understand Docker networking** - Container-to-container is simpler than host-to-container
+8. **Dockerize production scripts** - Run ingestion as container on same network for reliability
+9. **Verify after ingestion** - Always check row counts and data quality
 
 ## Common Issues
 
@@ -247,12 +322,22 @@ for chunk in df_iter:
 
 **Issue: Connection refused (WSL)**
 ```python
-# Wrong: localhost doesn't work on WSL
+# Problem: localhost doesn't work from WSL to container
+engine = create_engine("postgresql://root:root@localhost:5432/ny_taxi")
+# Error: could not connect to server: Connection refused
+
+# Solution 1: Use host.docker.internal (if supported)
+engine = create_engine("postgresql://root:root@host.docker.internal:5432/ny_taxi")
+
+# Solution 2: Use localhost only if port is mapped with -p 5432:5432
 engine = create_engine("postgresql://root:root@localhost:5432/ny_taxi")
 
-# Correct: Use host.docker.internal
-engine = create_engine("postgresql://root:root@host.docker.internal:5432/ny_taxi")
+# Solution 3: Run ingestion script as container on same network (best!)
+# Use container name: pgdatabase
+engine = create_engine("postgresql://root:root@pgdatabase:5432/ny_taxi")
 ```
+
+**Pro tip:** For production pipelines, dockerize your ingestion script and run it on the same Docker network as your database. This eliminates all host-to-container networking issues!
 
 **Issue: Type errors during ingestion**
 - Always specify `dtype` parameter to avoid pandas guessing wrong types
