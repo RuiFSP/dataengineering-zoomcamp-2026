@@ -2,6 +2,10 @@
 *.csv
 *.parquet
 
+# Generated images from AI tools
+generated-images/**
+!generated-images/.gitkeep
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
@@ -258,3 +262,10 @@ terraform.rc
 # planout
 
 *.json
+
+generated-images
+
+image-prompts
+
+social-media-posts
+
