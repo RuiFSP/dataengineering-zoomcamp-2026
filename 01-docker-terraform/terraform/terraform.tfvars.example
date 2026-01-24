@@ -1,3 +1,11 @@
 project_id  = "your-gcp-project-id"
 region      = "europe-west2"
 bucket_name = "your-unique-bucket-name"
+
+# Path to your local service account JSON file. Use an absolute path or a
+# path relative to the terraform working directory. DO NOT commit real keys.
+credentials_file_path = "/home/youruser/keys/my-creds.json"
+
+# Notes:
+# - Copy this file to `terraform.tfvars` and fill with your real values (gitignored).
+# - Alternatively, set `GOOGLE_APPLICATION_CREDENTIALS` or use ADC with `gcloud auth application-default login`.

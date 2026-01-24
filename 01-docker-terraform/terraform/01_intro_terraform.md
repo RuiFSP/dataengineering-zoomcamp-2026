@@ -78,7 +78,20 @@ This will download the required providers and initialize the backend.
 
 ## Using Variables for Configuration
 
-Instead of hardcoding values in `main.tf`, it's better to use variables for flexibility and security. Create a `variables.tf` file:
+Instead of hardcoding values in `main.tf`, it's better to use variables for flexibility and security. Terraform uses three key files to manage configuration:
+
+### File Structure Overview
+
+| File | Purpose | Commit to Git? | Contains |
+|------|---------|----------------|----------|
+| `main.tf` | Infrastructure code | ✅ YES | Resources, providers using `var.variable_name` |
+| `variables.tf` | Variable declarations | ✅ YES | Variable names, types, descriptions (NO real values) |
+| `terraform.tfvars` | Your actual values | ❌ NO | Real project IDs, bucket names, credentials paths |
+| `terraform.tfvars.example` | Template with placeholders | ✅ YES | Example values for other developers |
+
+### How It Works
+
+**Step 1: Declare variables in `variables.tf`** (commit this):
 
 ```hcl
 variable "project_id" {
@@ -96,34 +109,48 @@ variable "bucket_name" {
   description = "GCS bucket name"
   type        = string
 }
-```
 
-Update your `main.tf` to use these variables:
-
-```hcl
-provider "google" {
-  project = var.project_id
-  region  = var.region
+variable "credentials_file_path" {
+  description = "Path to the GCP service account credentials JSON file"
+  type        = string
+  sensitive   = true
 }
 ```
 
-Create `terraform.tfvars` with your actual values (this file should be gitignored):
+**Step 2: Use variables in `main.tf`** (commit this):
 
 ```hcl
-project_id  = "your-project-id"
-region      = "europe-west2"
-bucket_name = "your-unique-bucket-name"
+provider "google" {
+  project     = var.project_id
+  region      = var.region
+  credentials = file(var.credentials_file_path)
+}
 ```
 
-Create `terraform.tfvars.example` as a template (safe to commit):
+**Step 3: Provide actual values in `terraform.tfvars`** (DO NOT commit - gitignored):
 
 ```hcl
-project_id  = "your-gcp-project-id"
-region      = "europe-west2"
-bucket_name = "your-unique-bucket-name"
+project_id            = "gen-lang-client-0727543041"
+region                = "europe-west2"
+bucket_name           = "gen-lang-client-0727543041-demo-bucket"
+credentials_file_path = "../../keys/my-creds.json"
 ```
 
-**Note:** `.gitignore` already includes `*.tfvars` to prevent committing sensitive values.
+**Step 4: Create `terraform.tfvars.example`** as a template (commit this):
+
+```hcl
+project_id            = "your-gcp-project-id"
+region                = "europe-west2"
+bucket_name           = "your-unique-bucket-name"
+credentials_file_path = "/home/youruser/keys/my-creds.json"
+```
+
+**How Terraform connects them:**
+1. Terraform reads `variables.tf` → "I need a variable called `project_id`"
+2. Terraform reads `terraform.tfvars` → "The value of `project_id` is 'your-actual-project'"
+3. Terraform uses that value in `main.tf` via `var.project_id`
+
+**Note:** `.gitignore` already includes `*.tfvars` to prevent committing sensitive values. Each developer should copy `terraform.tfvars.example` to `terraform.tfvars` and fill in their own values.
 
 ## Creating a GCS Bucket
 
@@ -187,3 +214,30 @@ terraform destroy
 ```
 
 This will remove all resources we created in Google Cloud as defined in the Terraform files.
+
+## Recommendations (security & best practices)
+
+- **Don't commit service-account keys:** never add JSON keys to the repo. Keep them in a local `keys/` folder or a secure secrets store and ensure `keys/` and `*.json` are in [/.gitignore](../.gitignore).
+- **Prefer ADC / environment for local dev:** use `gcloud auth application-default login` or set `GOOGLE_APPLICATION_CREDENTIALS` instead of embedding keys into Terraform files.
+
+  Example (temporary per-shell):
+
+  ```bash
+  export GOOGLE_APPLICATION_CREDENTIALS="$HOME/path/to/my-creds.json"
+  terraform init
+  terraform apply
+  unset GOOGLE_APPLICATION_CREDENTIALS
+  ```
+
+- **Use a git-ignored Terraform var as a convenience only:** you can keep a `credentials_file_path` variable (marked `sensitive`) and a local `terraform.tfvars` (gitignored). Do not commit real `terraform.tfvars` files — commit only `terraform.tfvars.example`.
+
+  Example (single-run override):
+
+  ```bash
+  TF_VAR_credentials_file_path="$HOME/path/to/my-creds.json" terraform apply
+  ```
+
+- **CI / Production:** do not use checked-in JSON keys. Use CI secret stores, Workload Identity (recommended on GKE), or Secret Manager and grant least-privilege service accounts.
+- **Rotate keys if exposed:** if a key is ever committed, revoke it immediately and remove it from git history (use BFG or `git filter-repo`).
+- **Least privilege:** grant only the roles the Terraform-managed resources need (e.g., Storage Admin, BigQuery Admin), avoid owner-level permissions.
+- **Formatting & validation:** run `terraform fmt` and `terraform validate` before `apply`.
