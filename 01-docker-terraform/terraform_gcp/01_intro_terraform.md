@@ -130,15 +130,6 @@ provider "google" {
 **Step 3: Provide actual values in `terraform.tfvars`** (DO NOT commit - gitignored):
 
 ```hcl
-project_id            = "gen-lang-client-0727543041"
-region                = "europe-west2"
-bucket_name           = "gen-lang-client-0727543041-demo-bucket"
-credentials_file_path = "../../keys/my-creds.json"
-```
-
-**Step 4: Create `terraform.tfvars.example`** as a template (commit this):
-
-```hcl
 project_id            = "your-gcp-project-id"
 region                = "europe-west2"
 bucket_name           = "your-unique-bucket-name"
