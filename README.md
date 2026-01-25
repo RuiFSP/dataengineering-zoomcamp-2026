@@ -12,16 +12,30 @@ Datatalks homeworks and exercises for DE Zoomcamp 2026
 - **Docker Compose** - Multi-service orchestration (PostgreSQL + pgAdmin)
 - **Data pipelines** - NYC Taxi data ingestion using Python, pandas, and SQLAlchemy
 - **SQL queries** - Data analysis on PostgreSQL databases
-- **Terraform** - Infrastructure as Code for GCP (Google Cloud Storage + BigQuery)
+- **Terraform for GCP** - Infrastructure as Code for Google Cloud (Storage + BigQuery)
+- **Terraform for AWS** - Equivalent AWS infrastructure (S3 + Glue Catalog)
 - **Best practices** - Environment variables, `.gitignore` for credentials, and project structure
 
 **Key deliverables:**
 - [Homework 01](01-docker-terraform/homework01/homework01.md) - Docker, SQL, and Terraform exercises ✅
 - Working PostgreSQL + pgAdmin environment via Docker Compose
 - Python data ingestion scripts for parquet and CSV files
-- Terraform configurations for GCP resource provisioning
+- Terraform configurations for [GCP](01-docker-terraform/terraform_gcp/) and [AWS](01-docker-terraform/terraform_aws/) resource provisioning
 
-**Technologies used:** Docker, PostgreSQL, pgAdmin, Python, pandas, SQLAlchemy, Terraform, GCP
+**Technologies used:** Docker, PostgreSQL, pgAdmin, Python, pandas, SQLAlchemy, Terraform, GCP, AWS
+
+**Cloud Service Comparison - GCP vs AWS:**
+| GCP Service | AWS Equivalent | Purpose |
+|-------------|----------------|---------|
+| Google Cloud Storage (GCS) | Amazon S3 | Data Lake storage |
+| Uniform Bucket Level Access | S3 Public Access Block | Secure bucket access |
+| Object Lifecycle Rules | S3 Lifecycle Configuration | Automatic data expiration |
+| BigQuery Dataset | AWS Glue Catalog Database | Metadata & query layer |
+| Service Account JSON Key | IAM User Profile (AWS CLI) | Authentication |
+
+**Authentication Difference:**
+- **GCP**: Requires `my-creds.json` service account key file
+- **AWS**: Uses IAM profile from `~/.aws/credentials` (no separate file needed)
 
 ---
 

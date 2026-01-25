@@ -1,0 +1,17 @@
+# Copy this file to terraform.tfvars and fill in your values
+# NEVER commit terraform.tfvars to version control!
+
+# Your AWS CLI profile name (from ~/.aws/credentials or ~/.aws/config)
+aws_profile = "your-aws-profile-name"
+
+# AWS region (default: eu-west-2)
+region = "eu-west-2"
+
+# S3 bucket name (must be globally unique across all AWS accounts)
+bucket_name = "your-unique-bucket-name-12345"
+
+# AWS Glue Catalog Database name (default: demo_database)
+database_name = "demo_database"
+
+# Allow Terraform to destroy bucket even if it contains objects (default: true)
+force_destroy = true
