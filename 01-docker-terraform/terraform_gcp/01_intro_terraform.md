@@ -131,7 +131,7 @@ provider "google" {
 
 ```hcl
 project_id            = "your-gcp-project-id"
-region                = "europe-west2"
+region                = "your-region"
 bucket_name           = "your-unique-bucket-name"
 credentials_file_path = "/home/youruser/keys/my-creds.json"
 ```
