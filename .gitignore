@@ -144,6 +144,7 @@ celerybeat.pid
 
 # Environments
 .env
+.env_encoded
 .envrc
 .venv
 env/
@@ -151,6 +152,11 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+
+# Secrets and credentials
+secrets/
+service-account.json
+*-creds.json
 
 # Spyder project settings
 .spyderproject

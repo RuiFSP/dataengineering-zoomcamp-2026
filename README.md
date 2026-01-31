@@ -39,7 +39,45 @@ Datatalks homeworks and exercises for DE Zoomcamp 2026
 
 ---
 
-### 🔄 Module 2: Workflow Orchestration
-**Status:** Not Started | **Folder:** [02-workflow-orchestration/](02-workflow-orchestration/)
+### ✅ Module 2: Workflow Orchestration
+**Status:** Completed | **Folder:** [02-workflow-orchestration/](02-workflow-orchestration/)
+
+**What I learned:**
+- **Kestra fundamentals** - Modern declarative workflow orchestration platform
+- **ETL pipeline orchestration** - Extract, transform, and load NYC taxi data to GCP
+- **Variables and expressions** - Dynamic workflow configuration using Jinja templating
+- **Backfill functionality** - Historical data processing for multiple time periods
+- **Scheduled triggers** - Automated workflow execution with timezone support
+- **GCP integration** - Cloud Storage and BigQuery data loading
+- **Secrets management** - Secure credential handling with base64 encoding
+- **Docker Compose orchestration** - Multi-service setup (Kestra + PostgreSQL + pgAdmin)
+
+**Key deliverables:**
+- [Homework 02](02-workflow-orchestration/homework02/homework02.md) - Workflow orchestration and data pipeline exercises ✅
+- Working Kestra instance with PostgreSQL backend via Docker Compose
+- Automated ETL flows processing millions of taxi trip records
+- GCP bucket and BigQuery dataset created via Terraform-like flows
+- Backfill executions for all 2020 data (Yellow: 24.6M rows, Green: 1.7M rows)
+
+**Technologies used:** Kestra, Docker, PostgreSQL, Python, GCP (Cloud Storage + BigQuery), Gemini AI
+
+**Kestra Workflow Highlights:**
+| Flow | Purpose | Data Processed |
+|------|---------|----------------|
+| 08_gcp_taxi | Manual ETL execution | Single month of taxi data |
+| 09_gcp_taxi_scheduled | Scheduled ETL with backfill | Multiple months via cron triggers |
+| 06_gcp_kv | Configuration management | Stores GCP project settings |
+| 07_gcp_setup | Infrastructure provisioning | Creates GCS bucket + BigQuery dataset |
+
+**Data Pipeline Results:**
+- **Yellow Taxi (2020):** 24,648,499 records across 12 months
+- **Green Taxi (2020):** 1,734,051 records across 12 months
+- **Yellow Taxi (March 2021):** 1,925,152 records
+- **File size example:** 128.3 MiB uncompressed CSV for Dec 2020
+
+---
+
+### 🔄 Module 3: Data Warehouse
+**Status:** Not Started | **Folder:** [03-data-warehouse/](03-data-warehouse/)
 
 *Coming soon...*
