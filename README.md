@@ -77,7 +77,37 @@ Datatalks homeworks and exercises for DE Zoomcamp 2026
 
 ---
 
-### 🔄 Module 3: Data Warehouse
-**Status:** Not Started | **Folder:** [03-data-warehouse/](03-data-warehouse/)
+### ✅ Module 3: Data Warehouse
+**Status:** Completed | **Folder:** [03-data-warehouse/](03-data-warehouse/)
 
-*Coming soon...*
+**What I learned:**
+- **BigQuery fundamentals** - External tables, materialized tables, and native BigQuery storage
+- **Partitioning strategies** - Date-based partitioning for query optimization (91% cost reduction)
+- **Clustering techniques** - Organizing data within partitions for faster access
+- **Columnar storage** - Understanding how BigQuery scans only requested columns
+- **Query optimization** - Using `--dry_run` to estimate costs before execution
+- **Cost management** - Cleanup strategies to avoid unnecessary GCP charges
+- **GCS integration** - Creating external tables referencing Cloud Storage data
+- **Data analysis at scale** - Working with 20.3M taxi trip records across 6 months
+
+**Key deliverables:**
+- [Homework 03](03-data-warehouse/homework03/homework03.md) - BigQuery & Data Warehousing exercises ✅
+- External and materialized tables with 20.3M records (326.1 MiB parquet data)
+- Partitioned and clustered table achieving 91% query cost reduction (310MB → 27MB)
+- Complete cost analysis and GCP resource cleanup documentation
+- SQL queries demonstrating columnar storage efficiency and metadata optimization
+
+**Technologies used:** BigQuery, Google Cloud Storage, bq CLI, gsutil, SQL, Parquet
+
+**BigQuery Optimization Results:**
+| Optimization Technique | Before | After | Savings |
+|------------------------|--------|-------|---------|
+| Partitioning (date-range query) | 310.24 MB | 26.84 MB | 91% reduction |
+| Columnar storage (2 cols vs 1) | 155 MB | 310 MB | Linear scaling |
+| COUNT(*) metadata usage | N/A | 0 bytes | 100% (no scan) |
+| External vs Materialized estimation | 0 MB | 155.12 MB | Accurate sizing |
+
+**Key Learning:**
+Partitioning by date (`tpep_dropoff_datetime`) + clustering by frequently filtered columns (`VendorID`) creates a powerful optimization strategy. For a 15-day query window on 6 months of data, partitioning achieved 91% reduction in data scanned (from 310 MB to 27 MB), translating directly to cost savings in production. Understanding the difference between external tables (data in GCS, no storage cost) and materialized tables (data in BigQuery, faster queries but storage cost) is crucial for cost optimization.
+
+---
