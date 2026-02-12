@@ -6,8 +6,9 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "click>=8.1.7",
+    "dbt-bigquery>=1.8.0",
     "dbt-duckdb>=1.10.0",
-    "google-cloud-storage>=3.9.0",
+    "google-cloud-storage>=2.4,<3.2",
     "pandas>=2.3.3",
     "psycopg2-binary>=2.9.11",
     "pyarrow>=22.0.0",
