@@ -1,0 +1,112 @@
+version: 2
+
+sources:
+  - name: nytaxi
+    database: ny-taxi-dbt-zoomcamp
+    schema: nytaxi
+    description: "NYC Taxi and Limousine Commission (TLC) trip record data for yellow and green taxis"
+    
+    tables:
+      - name: yellow_tripdata
+        description: "Yellow taxi trip records for 2019-2020"
+        columns:
+          - name: vendorid
+            description: "A code indicating the TPEP provider"
+          - name: tpep_pickup_datetime
+            description: "The date and time when the meter was engaged"
+          - name: tpep_dropoff_datetime
+            description: "The date and time when the meter was disengaged"
+          - name: passenger_count
+            description: "The number of passengers in the vehicle"
+          - name: trip_distance
+            description: "The elapsed trip distance in miles"
+          - name: ratecodeid
+            description: "The final rate code in effect at the end of the trip"
+          - name: store_and_fwd_flag
+            description: "Flag indicating whether trip record was held in vehicle memory"
+          - name: pulocationid
+            description: "TLC Taxi Zone where the meter was engaged"
+          - name: dolocationid
+            description: "TLC Taxi Zone where the meter was disengaged"
+          - name: payment_type
+            description: "A numeric code signifying how the passenger paid for the trip"
+          - name: fare_amount
+            description: "The time-and-distance fare calculated by the meter"
+          - name: extra
+            description: "Miscellaneous extras and surcharges"
+          - name: mta_tax
+            description: "MTA tax that is automatically triggered"
+          - name: tip_amount
+            description: "Tip amount (automatically populated for credit card tips)"
+          - name: tolls_amount
+            description: "Total amount of all tolls paid in trip"
+          - name: improvement_surcharge
+            description: "Improvement surcharge assessed on trips"
+          - name: total_amount
+            description: "The total amount charged to passengers"
+          - name: congestion_surcharge
+            description: "Congestion surcharge for trips in Manhattan"
+          - name: airport_fee
+            description: "Airport fee for pickups at LaGuardia and JFK"
+            
+      - name: green_tripdata
+        description: "Green taxi trip records for 2019-2020"
+        columns:
+          - name: vendorid
+            description: "A code indicating the LPEP provider"
+          - name: lpep_pickup_datetime
+            description: "The date and time when the meter was engaged"
+          - name: lpep_dropoff_datetime
+            description: "The date and time when the meter was disengaged"
+          - name: passenger_count
+            description: "The number of passengers in the vehicle"
+          - name: trip_distance
+            description: "The elapsed trip distance in miles"
+          - name: ratecodeid
+            description: "The final rate code in effect at the end of the trip"
+          - name: store_and_fwd_flag
+            description: "Flag indicating whether trip record was held in vehicle memory"
+          - name: pulocationid
+            description: "TLC Taxi Zone where the meter was engaged"
+          - name: dolocationid
+            description: "TLC Taxi Zone where the meter was disengaged"
+          - name: payment_type
+            description: "A numeric code signifying how the passenger paid for the trip"
+          - name: fare_amount
+            description: "The time-and-distance fare calculated by the meter"
+          - name: extra
+            description: "Miscellaneous extras and surcharges"
+          - name: mta_tax
+            description: "MTA tax that is automatically triggered"
+          - name: tip_amount
+            description: "Tip amount (automatically populated for credit card tips)"
+          - name: tolls_amount
+            description: "Total amount of all tolls paid in trip"
+          - name: improvement_surcharge
+            description: "Improvement surcharge assessed on trips"
+          - name: total_amount
+            description: "The total amount charged to passengers"
+          - name: congestion_surcharge
+            description: "Congestion surcharge for trips in Manhattan"
+          - name: ehail_fee
+            description: "E-hail service fee"
+          - name: trip_type
+            description: "Code indicating whether trip was street-hail or dispatch"
+            
+      - name: fhv_tripdata
+        description: "For-Hire Vehicle (FHV) trip records for 2019"
+        columns:
+          - name: dispatching_base_num
+            description: "The TLC Base License Number of the base that dispatched the trip"
+          - name: pickup_datetime
+            description: "The date and time of the trip pick-up"
+          - name: dropOff_datetime
+            description: "The date and time of the trip drop-off"
+          - name: PUlocationID
+            description: "TLC Taxi Zone where the trip started"
+          - name: DOlocationID
+            description: "TLC Taxi Zone where the trip ended"
+          - name: SR_Flag
+            description: "Indicates if the trip was part of a shared ride chain"
+          - name: Affiliated_base_number
+            description: "Base number affiliated with the trip"

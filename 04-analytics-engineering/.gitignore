@@ -1,0 +1,51 @@
+# 🔒 Sensitive Files - DO NOT COMMIT
+
+# Service Account Keys (CRITICAL - NEVER COMMIT)
+gcp-infrastructure/terraform/keys/*.json
+gcp-infrastructure/terraform/keys/*-key.json
+**/keys/*.json
+*.json
+!**/seeds/*.json
+
+# Terraform Files with Sensitive Data
+gcp-infrastructure/terraform/*.tfvars
+gcp-infrastructure/terraform/*.tfstate
+gcp-infrastructure/terraform/*.tfstate.*
+gcp-infrastructure/terraform/*.tfstate.backup
+gcp-infrastructure/terraform/.terraform/
+gcp-infrastructure/terraform/.terraform.lock.hcl
+
+# dbt Build Artifacts (contain full SQL with potential sensitive data)
+taxi_rides_ny/target/
+taxi_rides_ny/dbt_packages/
+taxi_rides_ny/logs/
+**/target/
+**/dbt_packages/
+**/logs/
+
+# Python Environment
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+.venv/
+env/
+ENV/
+
+# IDE / Editor Files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# OS Files
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.bak
+*.log

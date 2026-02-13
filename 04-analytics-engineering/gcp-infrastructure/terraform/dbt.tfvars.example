@@ -1,0 +1,34 @@
+# GCP Project Configuration
+# Copy this file to 'dbt.tfvars' and fill with your actual values
+# dbt.tfvars is gitignored for security
+
+project_id = "your-gcp-project-id"
+region     = "europe-west2"
+location   = "EU"
+
+# GCS Bucket must be globally unique
+# Suggestion: use format like "your-project-id-taxi-data"
+bucket_name = "your-unique-bucket-name-taxi-data"
+
+# Path to service account JSON key file (relative to this terraform directory)
+# Generate this file using the script: ../scripts/02-create-service-account.sh
+credentials_file_path = "keys/dbt-sa-key.json"
+
+# Optional: Override default dataset names
+# nytaxi_dataset_id = "nytaxi"
+# dbt_prod_dataset_id = "dbt_prod"
+
+# ============================================================================
+# INSTRUCTIONS
+# ============================================================================
+# 1. Copy this file: cp dbt.tfvars.example dbt.tfvars
+# 2. Edit dbt.tfvars with your actual values
+# 3. Run the service account creation script first: ../scripts/02-create-service-account.sh
+# 4. Initialize Terraform: terraform init
+# 5. Review changes: terraform plan -var-file="dbt.tfvars"
+# 6. Apply changes: terraform apply -var-file="dbt.tfvars"
+#
+# SECURITY NOTES:
+# - dbt.tfvars is gitignored - never commit it
+# - keys/*.json are gitignored - never commit service account keys
+# - Keep your credentials secure and rotate keys periodically

@@ -111,3 +111,49 @@ Datatalks homeworks and exercises for DE Zoomcamp 2026
 Partitioning by date (`tpep_dropoff_datetime`) + clustering by frequently filtered columns (`VendorID`) creates a powerful optimization strategy. For a 15-day query window on 6 months of data, partitioning achieved 91% reduction in data scanned (from 310 MB to 27 MB), translating directly to cost savings in production. Understanding the difference between external tables (data in GCS, no storage cost) and materialized tables (data in BigQuery, faster queries but storage cost) is crucial for cost optimization.
 
 ---
+
+### ✅ Module 4: Analytics Engineering
+**Status:** Completed | **Folder:** [04-analytics-engineering/](04-analytics-engineering/)
+
+**What I learned:**
+- **dbt Core fundamentals** - Local CLI-based development with BigQuery adapter
+- **Project structure** - Organizing models into staging, intermediate, and core layers
+- **Data modeling** - Building dimensional models (facts and dimensions) from raw data
+- **Data quality testing** - Implementing automated tests for uniqueness and referential integrity
+- **Deduplication strategies** - 4-column composite key approach for handling duplicate records
+- **SQL materialization types** - Views vs tables vs incremental models
+- **Jinja templating** - Dynamic SQL with variables and macros (e.g., `is_test_run` flag)
+- **dbt packages** - Using `dbt_utils` for surrogate keys and testing utilities
+- **BigQuery optimization** - QUALIFY window functions for efficient deduplication
+- **Data lineage** - Understanding upstream/downstream dependencies between models
+
+**Key deliverables:**
+- [Homework 04](04-analytics-engineering/homework04/homework04.md) - dbt modeling and transformation exercises ✅
+- Complete dbt project with 8 models across 3 layers (staging, intermediate, core)
+- Processed 130M+ raw records → 112M deduplicated trips
+- Fact tables: `fct_trips` (112M records), `fct_monthly_zone_revenue` (11,662 aggregations)
+- Data quality tests with 9 assertions covering uniqueness and relationships
+- Terraform-managed GCP infrastructure (service account, BigQuery datasets)
+
+**Technologies used:** dbt Core, BigQuery, SQL, Jinja, Python, GCP, Terraform, uv (package manager)
+
+**dbt Model Architecture:**
+| Layer | Model | Purpose | Record Count |
+|-------|-------|---------|--------------|
+| Staging | `stg_green_tripdata` | Clean & standardize green taxi data | ~2M records |
+| Staging | `stg_yellow_tripdata` | Clean & standardize yellow taxi data | ~130M records |
+| Staging | `stg_fhv_tripdata` | Clean & standardize FHV data | 43.2M records |
+| Intermediate | `int_trips_unioned` | Union yellow + green taxi data | 114M records |
+| Intermediate | `int_trips` | Deduplicate using 4-column key | 112M records |
+| Core | `fct_trips` | Enriched trip facts with zone names | 112M records |
+| Core | `fct_monthly_zone_revenue` | Monthly revenue aggregations | 11,662 records |
+
+**Deduplication Strategy:**
+- **Composite Key:** `vendorid` + `pickup_datetime` + `pickup_locationid` + `service_type`
+- **Method:** `QUALIFY ROW_NUMBER() OVER (PARTITION BY ... ORDER BY ...) = 1`
+- **Result:** 114M → 112M records (removed ~2M duplicates)
+
+**Key Learning:**
+dbt transforms the data warehouse into a development environment with version control, testing, and documentation. The layered architecture (staging → intermediate → core) creates maintainable transformations: staging cleans raw data, intermediate handles business logic (like deduplication), and core creates analytics-ready tables. Using local dbt Core with a cloud data warehouse (BigQuery) provides the best of both worlds—powerful IDE experience locally with scalable compute in the cloud. The 4-column deduplication strategy proved critical: deduplicating only on `vendorid + pickup_datetime` wasn't enough; adding `pickup_locationid + service_type` captured the true uniqueness of trip records.
+
+---

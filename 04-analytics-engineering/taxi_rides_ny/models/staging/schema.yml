@@ -1,0 +1,24 @@
+version: 2
+
+models:
+  - name: stg_green_tripdata
+    description: "Staging model for green taxi trip data - cleaned and standardized"
+    columns:
+      - name: tripid
+        description: "Primary key for this table, generated with vendorid+pickup_datetime"
+        data_tests:
+          - unique:
+              severity: warn
+          - not_null:
+              severity: warn
+
+  - name: stg_yellow_tripdata
+    description: "Staging model for yellow taxi trip data - cleaned and standardized"
+    columns:
+      - name: tripid
+        description: "Primary key for this table, generated with vendorid+pickup_datetime"
+        data_tests:
+          - unique:
+              severity: warn
+          - not_null:
+              severity: warn

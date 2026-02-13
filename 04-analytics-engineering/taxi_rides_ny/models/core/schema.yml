@@ -1,0 +1,40 @@
+version: 2
+
+models:
+  - name: fct_trips
+    description: "Fact table with all taxi trips - includes yellow and green data with full zone information"
+    columns:
+      - name: tripid
+        description: "Primary key for trips"
+        data_tests:
+          - unique:
+              severity: warn
+          - not_null:
+              severity: warn
+      - name: payment_type
+        description: "Payment method used"
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [1, 2, 3, 4, 5]
+                quote: false
+              severity: warn
+              
+  - name: dim_zones
+    description: "Dimension table for NYC taxi zones"
+    columns:
+      - name: locationid
+        description: "Primary key for zones"
+        data_tests:
+          - unique
+          - not_null
+
+  - name: fct_monthly_zone_revenue
+    description: "Monthly aggregated revenue by pickup zone and service type"
+    columns:
+      - name: revenue_zone
+        description: "Pickup zone name"
+      - name: revenue_month
+        description: "Month of revenue"
+      - name: service_type
+        description: "Type of taxi service (Yellow or Green)"
