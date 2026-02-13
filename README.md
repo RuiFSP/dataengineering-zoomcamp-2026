@@ -137,6 +137,16 @@ Partitioning by date (`tpep_dropoff_datetime`) + clustering by frequently filter
 
 **Technologies used:** dbt Core, BigQuery, SQL, Jinja, Python, GCP, Terraform, uv (package manager)
 
+**Hybrid Approach (different from course guides):**
+Instead of using dbt Cloud (the course's recommended web IDE), I opted for a **local-first hybrid setup**:
+- **Local:** dbt Core CLI + VSCode for development, Git for version control
+- **Cloud:** BigQuery for data warehouse and SQL execution
+- **Infrastructure as Code:** Terraform for GCP resource provisioning (service accounts, BigQuery datasets, IAM roles)
+- **Why:** Better IDE experience, full control over environment, reproducible infrastructure, and no vendor lock-in
+- **Trade-off:** Manual setup (Terraform configs, service accounts, profiles.yml) vs dbt Cloud's one-click setup
+
+This approach mirrors real-world production environments where teams prefer local development with cloud compute and infrastructure automation.
+
 **dbt Model Architecture:**
 | Layer | Model | Purpose | Record Count |
 |-------|-------|---------|--------------|

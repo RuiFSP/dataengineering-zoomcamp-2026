@@ -274,26 +274,79 @@ Follow the guide: [../dbt/setup/local_setup.md](../dbt/setup/local_setup.md)
 
 ## 🧹 Cleanup
 
-To delete all resources and avoid charges:
+To delete all resources and avoid charges, follow these steps in order:
+
+### Option 1: Complete Cleanup (Recommended)
 
 ```bash
-# Delete BigQuery tables
-bq rm -r -f -d nytaxi
-bq rm -r -f -d dbt_prod
+# 1. Drop dbt-created tables and schemas
+cd ../taxi_rides_ny
+uv run dbt run-operation drop_all_models --target prod
 
-# Delete GCS bucket
+# 2. Delete dbt-created BigQuery datasets
+bq rm -r -f -d ny-taxi-dbt-zoomcamp:dbt_prod_staging
+bq rm -r -f -d ny-taxi-dbt-zoomcamp:dbt_prod_intermediate
+bq rm -r -f -d ny-taxi-dbt-zoomcamp:dbt_prod_core
+
+# 3. Delete source data datasets
+bq rm -r -f -d ny-taxi-dbt-zoomcamp:nytaxi
+bq rm -r -f -d ny-taxi-dbt-zoomcamp:dbt_prod
+
+# 4. Delete GCS bucket (replace with your bucket name)
 gsutil rm -r gs://YOUR-BUCKET-NAME/
 
-# Destroy Terraform resources
-cd terraform
+# 5. Destroy Terraform-managed infrastructure
+cd ../gcp-infrastructure/terraform
 terraform destroy -var-file="dbt.tfvars"
 
-# Delete service account
-gcloud iam service-accounts delete dbt-bigquery-sa@PROJECT_ID.iam.gserviceaccount.com
+# 6. Clean local artifacts
+cd ../../taxi_rides_ny
+rm -rf target/ logs/ dbt_packages/
 
-# Delete project (optional - removes everything)
-gcloud projects delete PROJECT_ID
+# 7. (Optional) Delete the entire project
+gcloud projects delete ny-taxi-dbt-zoomcamp
 ```
+
+### Option 2: Quick Cleanup (Delete Everything at Once)
+
+```bash
+# Delete entire project (removes all resources instantly)
+gcloud projects delete ny-taxi-dbt-zoomcamp
+
+# Clean local artifacts only
+cd taxi_rides_ny
+rm -rf target/ logs/ dbt_packages/
+```
+
+### What Gets Deleted
+
+| Resource Type | Managed By | Cleanup Method |
+|---------------|------------|----------------|
+| dbt models (tables/views) | dbt | `dbt run-operation drop_all_models` or `bq rm` |
+| BigQuery datasets | Terraform + dbt | `bq rm -r -d` |
+| GCS bucket | Terraform | `terraform destroy` or `gsutil rm` |
+| Service account | Terraform | `terraform destroy` |
+| IAM bindings | Terraform | `terraform destroy` |
+| Local artifacts | dbt | `rm -rf target/ logs/ dbt_packages/` |
+
+### Verify Cleanup
+
+```bash
+# Check remaining BigQuery datasets
+bq ls --project_id=ny-taxi-dbt-zoomcamp
+
+# Check GCS buckets
+gsutil ls -p ny-taxi-dbt-zoomcamp
+
+# Check service accounts
+gcloud iam service-accounts list --project=ny-taxi-dbt-zoomcamp
+
+# Verify Terraform state is empty
+cd gcp-infrastructure/terraform
+terraform show
+```
+
+> **💡 Note:** `terraform destroy` only removes infrastructure it created. Tables/datasets created by dbt SQL execution must be dropped separately using `bq rm` commands or the dbt drop operation.
 
 ## 🔧 Troubleshooting
 
