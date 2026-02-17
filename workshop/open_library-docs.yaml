@@ -1,0 +1,16 @@
+auth_info:
+- information_source; https://openlibrary.org/dev/docs/restful_api:
+  - 'Session-based authentication using cookies: after successful login, a set-cookie
+    header is returned in the response; include this cookie with subsequent requests.
+    Additionally, every Open Library account holder has S3 keys available at https://archive.org/account/s3.php
+    for API access.'
+possible_base_urls:
+- information_source; https://openlibrary.org/dev/docs/api/books:
+  - http://openlibrary.org
+  - https://covers.openlibrary.org/b/id
+possible_endpoints:
+- information_source; https://openlibrary.org/dev/docs/api/books:
+  - GET http://openlibrary.org/api/books
+  - GET https://openlibrary.org/api/books
+- information_source; https://openlibrary.org/dev/docs/restful_api:
+  - PUT /resource
