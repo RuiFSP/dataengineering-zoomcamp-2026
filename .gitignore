@@ -276,3 +276,9 @@ image-prompts
 social-media-posts
 
 03-data-warehouse/data-warehouse/serving_dir
+.bruin.yml
+logs/runs
+logs/*.log
+*.py[cod]
+logs
+duckdb.db

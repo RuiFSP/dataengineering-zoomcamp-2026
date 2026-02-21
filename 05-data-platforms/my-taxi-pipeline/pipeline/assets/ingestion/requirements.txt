@@ -1,0 +1,15 @@
+pandas
+requests
+pyarrow
+python-dateutil
+# TODO: Add Python dependencies required by the python ingestion asset.
+# - Keep this intentionally minimal.
+# - Pin versions for reproducibility.
+# Docs: https://getbruin.com/docs/bruin/assets/python
+#
+# Example:
+pandas
+requests
+pyarrow
+python-dateutil
+
