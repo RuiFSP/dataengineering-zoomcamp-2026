@@ -135,14 +135,3 @@ You're running a Bruin pipeline for the first time on a new DuckDB database. Wha
 **Explanation:** Use `--full-refresh` to ensure tables are created from scratch on a new DuckDB database.
 
 ---
-
-## 📚 Useful Bruin Documentation Links
-
-- [Bruin Quickstart Guide](https://docs.getbruin.com/getting-started/introduction/quickstart)
-- [Bruin Asset Materialization](https://docs.getbruin.com/assets/materialization)
-- [Bruin Quality Checks](https://docs.getbruin.com/quality/overview)
-- [Bruin Pipeline Variables](https://docs.getbruin.com/getting-started/pipeline-variables)
-- [Bruin CLI Commands](https://docs.getbruin.com/commands/run)
-- [Bruin Graph & Lineage](https://docs.getbruin.com/commands/lineage)
-
-Refer to these links for more details on each topic covered in the homework.
