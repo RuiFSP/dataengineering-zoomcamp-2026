@@ -159,11 +159,47 @@ This approach mirrors real-world production environments where teams prefer loca
 | Core | `fct_monthly_zone_revenue` | Monthly revenue aggregations | 11,662 records |
 
 **Deduplication Strategy:**
-- **Composite Key:** `vendorid` + `pickup_datetime` + `pickup_locationid` + `service_type`
-- **Method:** `QUALIFY ROW_NUMBER() OVER (PARTITION BY ... ORDER BY ...) = 1`
-- **Result:** 114M → 112M records (removed ~2M duplicates)
 
 **Key Learning:**
 dbt transforms the data warehouse into a development environment with version control, testing, and documentation. The layered architecture (staging → intermediate → core) creates maintainable transformations: staging cleans raw data, intermediate handles business logic (like deduplication), and core creates analytics-ready tables. Using local dbt Core with a cloud data warehouse (BigQuery) provides the best of both worlds—powerful IDE experience locally with scalable compute in the cloud. The 4-column deduplication strategy proved critical: deduplicating only on `vendorid + pickup_datetime` wasn't enough; adding `pickup_locationid + service_type` captured the true uniqueness of trip records.
 
----
+### ✅ Module 5: Data Platforms
+**Status:** Completed | **Folder:** [05-data-platforms/](05-data-platforms/)
+
+**What I learned:**
+- **Bruin CLI fundamentals** – Unified tool for data ingestion, transformation, orchestration, and governance
+- **Pipeline architecture** – Layered approach (ingestion, staging, reporting) for NYC Taxi data
+- **Incremental processing** – Using `time_interval` materialization for efficient updates
+- **Quality checks & lineage** – Built-in validation and visualization of data flows
+- **Asset management** – Version-controlled assets (Python, SQL, YAML, CSV) for reproducible pipelines
+- **AI agent integration** – Conversational pipeline development and troubleshooting with Bruin MCP
+- **Cloud deployment** – Managed infrastructure and cloud-native workflows with Bruin Cloud
+- **Quick feedback cycles** – Local-first development with rapid iteration
+
+**Key deliverables:**
+- [Homework 05](05-data-platforms/homework05/homework05.md) – Bruin CLI, pipeline, and platform exercises ✅
+- Complete Bruin project structure: `.bruin.yml`, `pipeline/pipeline.yml`, and layered assets
+- End-to-end NYC Taxi pipeline (ingestion, staging, reporting)
+- Reference notes and video tutorials for Bruin and data platform concepts
+
+**Technologies used:** Bruin CLI, VS Code extension, DuckDB, BigQuery, Python, SQL, YAML
+
+**Bruin Platform Highlights:**
+| Feature | Purpose | Result |
+|--------|---------|--------|
+| Unified CLI | Ingestion, transformation, orchestration, governance | One tool for all workflows |
+| Layered pipeline | Modular asset structure | Reproducible, extensible pipelines |
+| Incremental materialization | Efficient updates | Fast, scalable processing |
+| Quality checks | Data validation | Reliable pipelines |
+| Lineage visualization | Data flow tracking | Transparent dependencies |
+| AI agent (MCP) | Conversational development | Fast troubleshooting & building |
+| Cloud deployment | Managed infrastructure | Scalable, production-ready workflows |
+
+**Unique Approaches:**
+- AI-assisted pipeline development and troubleshooting (Bruin MCP)
+- All pipeline configuration and assets are version-controlled text files (no UI lock-in)
+- Mix-and-match asset types (Python, SQL, YAML, CSV) in a single pipeline
+- Emphasis on quick feedback cycles and local development
+
+**Key Learning:**
+Module 5 demonstrates a modern, unified data platform workflow using Bruin CLI. The approach emphasizes reproducibility, quality, extensibility, and rapid iteration. AI integration and version-controlled assets enable flexible, scalable pipelines suitable for both local and cloud environments.
