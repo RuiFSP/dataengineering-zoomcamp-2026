@@ -1,136 +1,137 @@
-# Module 6 Homework
+# Module 6 Homework: Batch Processing with Spark
 
-In this homework we'll put what we learned about Spark in practice.
+This document contains the solved homework for Module 6 using PySpark and the November 2025 Yellow Taxi dataset.
 
-For this homework we will be using the Yellow 2025-11 data from the official website:
+## Homework Summary - Answers
+
+| Question | Answer |
+|----------|--------|
+| Q1. Spark version | `4.1.1` |
+| Q2. Avg parquet file size after `repartition(4)` | **25MB** (actual avg: `24.41 MB`) |
+| Q3. Trips starting on 2025-11-15 | **162,604** |
+| Q4. Longest trip duration | **90.6 hours** (actual max: `90.65`) |
+| Q5. Spark UI local port | **4040** |
+| Q6. Least frequent pickup zone | **Arden Heights** |
+
+## Prerequisites
+
+1. Java installed (Spark runtime dependency).
+2. Python virtual environment available at project root (`.venv`).
+3. `pyspark` installed in the virtual environment.
+4. Input files downloaded in `06-batch/homework06/`.
+
+## Data Download
+
+From `06-batch/homework06/`:
 
 ```bash
-wget https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2025-11.parquet
+wget -nc https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2025-11.parquet
+wget -nc https://d37ci6vzurychx.cloudfront.net/misc/taxi_zone_lookup.csv
 ```
-
 
 ## Question 1: Install Spark and PySpark
 
-- Install Spark
-- Run PySpark
-- Create a local spark session
-- Execute spark.version.
+Create a local Spark session and print `spark.version`.
 
-What's the output?
+```python
+from pyspark.sql import SparkSession
 
-> [!NOTE]
-> To install PySpark follow this [guide](https://github.com/DataTalksClub/data-engineering-zoomcamp/blob/main/06-batch/setup/pyspark.md)
+spark = SparkSession.builder.master("local[*]").appName("homework06").getOrCreate()
+print(spark.version)
+```
 
+Result from this environment: `4.1.1`.
+
+Final answer: `4.1.1`
 
 ## Question 2: Yellow November 2025
 
-Read the November 2025 Yellow into a Spark Dataframe.
+Read `yellow_tripdata_2025-11.parquet`, repartition to 4, and write parquet output.
 
-Repartition the Dataframe to 4 partitions and save it to parquet.
+```python
+df = spark.read.parquet("yellow_tripdata_2025-11.parquet")
+df.repartition(4).write.mode("overwrite").parquet("yellow_2025_11_repartitioned_4")
+```
 
-What is the average size of the Parquet (ending with .parquet extension) Files that were created (in MB)? Select the answer which most closely matches.
+Then average only parquet part-file sizes (`*.parquet`):
 
-- 6MB
-- 25MB
-- 75MB
-- 100MB
+- Part sizes (MB): `24.39`, `24.42`, `24.42`, `24.41`
+- Average size (MB): `24.41`
 
+Closest option: **25MB**.
+
+Final answer: `25MB`
 
 ## Question 3: Count records
 
-How many taxi trips were there on the 15th of November?
+Count records where pickup date is `2025-11-15`:
 
-Consider only trips that started on the 15th of November.
+```python
+from pyspark.sql import functions as F
 
-- 62,610
-- 102,340
-- 162,604
-- 225,768
+count_1511 = (
+    df.filter(F.to_date(F.col("tpep_pickup_datetime")) == F.lit("2025-11-15"))
+    .count()
+)
+```
 
+Exact result: `162,604`.
+
+Final answer: `162,604`
 
 ## Question 4: Longest trip
 
-What is the length of the longest trip in the dataset in hours?
+Compute maximum trip duration in hours:
 
-- 22.7
-- 58.2
-- 90.6
-- 134.5
+```python
+duration_hours = (
+    (F.unix_timestamp(F.col("tpep_dropoff_datetime")) - F.unix_timestamp(F.col("tpep_pickup_datetime")))
+    / F.lit(3600.0)
+)
 
+max_hours = (
+    df.select(duration_hours.alias("duration_hours"))
+    .agg(F.max("duration_hours").alias("max_duration_hours"))
+    .collect()[0]["max_duration_hours"]
+)
+```
+
+Exact result: `90.65` hours.
+
+Closest option: **90.6**.
+
+Final answer: `90.6`
 
 ## Question 5: User Interface
 
-Spark's User Interface which shows the application's dashboard runs on which local port?
+Spark UI default local port is **4040**.
 
-- 80
-- 443
-- 4040
-- 8080
+Note: if port `4040` is already occupied, Spark may auto-increment (e.g., `4041`).
 
-
+Final answer: `4040`
 
 ## Question 6: Least frequent pickup location zone
 
-Load the zone lookup data into a temp view in Spark:
+Load zone lookup CSV and join with pickup location IDs:
 
-```bash
-wget https://d37ci6vzurychx.cloudfront.net/misc/taxi_zone_lookup.csv
+```python
+zones_df = spark.read.option("header", True).option("inferSchema", True).csv("taxi_zone_lookup.csv")
+
+zone_counts = (
+    df.groupBy("PULocationID")
+    .count()
+    .join(zones_df, df.PULocationID == zones_df.LocationID, "left")
+    .filter(F.col("Zone").isNotNull())
+    .select("Zone", "count")
+)
 ```
 
-Using the zone lookup data and the Yellow November 2025 data, what is the name of the LEAST frequent pickup location Zone?
+Minimum pickup count was `1`, with multiple tied zones including:
 
-- Governor's Island/Ellis Island/Liberty Island
-- Arden Heights
-- Rikers Island
-- Jamaica Bay
+1. `Arden Heights`
+2. `Governor's Island/Ellis Island/Liberty Island`
+3. `Eltingville/Annadale/Prince's Bay` (not in the answer options)
 
-If multiple answers are correct, select any
+Since multiple are valid and the homework allows any tied answer, selected answer is:
 
-## Submitting the solutions
-
-- Form for submitting: https://courses.datatalks.club/de-zoomcamp-2026/homework/hw6
-- Deadline: See the website
-
-
-## Learning in Public
-
-We encourage everyone to share what they learned. This is called "learning in public".
-
-Read more about the benefits [here](https://alexeyondata.substack.com/p/benefits-of-learning-in-public-and).
-
-### Example post for LinkedIn
-
-```
-🚀 Week 6 of Data Engineering Zoomcamp by @DataTalksClub complete!
-
-Just finished Module 6 - Batch Processing with Spark. Learned how to:
-
-✅ Set up PySpark and create Spark sessions
-✅ Read and process Parquet files at scale
-✅ Repartition data for optimal performance
-✅ Analyze millions of taxi trips with DataFrames
-✅ Use Spark UI for monitoring jobs
-
-Processing 4M+ taxi trips with Spark - distributed computing is powerful! 💪
-
-Here's my homework solution: <LINK>
-
-Following along with this amazing free course - who else is learning data engineering?
-
-You can sign up here: https://github.com/DataTalksClub/data-engineering-zoomcamp/
-```
-
-### Example post for Twitter/X
-
-```
-⚡ Module 6 of Data Engineering Zoomcamp done!
-
-- Batch processing with Spark 🔥
-- PySpark & DataFrames
-- Parquet file optimization
-- Spark UI on port 4040
-
-My solution: <LINK>
-
-Free course by @DataTalksClub: https://github.com/DataTalksClub/data-engineering-zoomcamp/
-```
+Final answer: `Arden Heights`
