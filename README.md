@@ -203,3 +203,39 @@ dbt transforms the data warehouse into a development environment with version co
 
 **Key Learning:**
 Module 5 demonstrates a modern, unified data platform workflow using Bruin CLI. The approach emphasizes reproducibility, quality, extensibility, and rapid iteration. AI integration and version-controlled assets enable flexible, scalable pipelines suitable for both local and cloud environments.
+
+---
+
+### ✅ Module 6: Batch Processing
+**Status:** Completed | **Folder:** [06-batch/](06-batch/)
+
+**What I learned:**
+- **Batch processing fundamentals** - Why batch workloads matter and where Spark fits in modern data platforms
+- **Spark setup and local development** - Installing Java/PySpark and creating local Spark sessions
+- **Spark DataFrames and Spark SQL** - Reading parquet/CSV data, transformations, aggregations, and SQL-based analysis
+- **Schema and storage handling** - Working with taxi schemas, parquet output, and partition/repartition strategies
+- **Spark internals** - Cluster anatomy, execution behavior, and performance implications of groupBy and joins
+- **RDD concepts (optional)** - Lower-level distributed operations including `mapPartitions`
+- **Cloud execution patterns** - Spark with GCS, local clusters, Dataproc setup, and BigQuery connectivity
+- **Validation through homework** - Applying class concepts on NYC Taxi November 2025 data to confirm understanding
+
+**Key deliverables:**
+- [Homework 06](06-batch/homework06/homework06.md) - Spark batch-processing exercises and validated answers ✅
+- Reproducible solver script: [homework_queries.py](06-batch/homework06/homework_queries.py)
+- Completed class materials and notebooks in [06-batch/class_materials/code/](06-batch/class_materials/code/)
+- End-to-end analysis on Yellow Taxi November 2025 data using Spark DataFrames and joins
+
+**Technologies used:** Apache Spark, PySpark, Spark SQL, Python, Parquet, CSV, Java, GCS, Dataproc, BigQuery
+
+**Spark Learning Highlights:**
+| Topic | What was practiced | Outcome |
+|------|---------------------|---------|
+| Spark setup | Local session, runtime verification, Spark UI | Working Spark 4.1.1 environment |
+| DataFrames + SQL | Filters, aggregations, SQL queries on taxi data | Reproducible batch analysis |
+| Partitioning strategy | `repartition(4)` and parquet output sizing | Controlled file layout and storage behavior |
+| GroupBy + joins | Pickup zone frequency with lookup joins | Correct low-frequency zone identification |
+| Duration calculations | Timestamp-based trip duration metrics | Accurate max duration computation |
+| Cloud patterns | GCS/Dataproc/BigQuery integration concepts | Clear path from local to cloud execution |
+
+**Key Learning:**
+Module 6 reinforced that Spark is not only about writing transformations; it is about understanding execution patterns, partitioning behavior, and data layout decisions. The homework served as a practical validation layer for the class materials, confirming both conceptual understanding and implementation accuracy on a real dataset.
