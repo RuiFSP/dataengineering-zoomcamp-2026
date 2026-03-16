@@ -239,3 +239,38 @@ Module 5 demonstrates a modern, unified data platform workflow using Bruin CLI. 
 
 **Key Learning:**
 Module 6 reinforced that Spark is not only about writing transformations; it is about understanding execution patterns, partitioning behavior, and data layout decisions. The homework served as a practical validation layer for the class materials, confirming both conceptual understanding and implementation accuracy on a real dataset.
+
+---
+
+### ✅ Module 7: Stream Processing
+**Status:** Completed | **Folder:** [07-streaming/](07-streaming/)
+
+**What I learned:**
+- **Streaming fundamentals** - Event-driven architecture and the role of message brokers in real-time data pipelines
+- **Redpanda** - Kafka-compatible broker with simpler operational model; topic creation and management via `rpk` CLI
+- **Kafka-Python producer/consumer** - Serializing records to JSON, batching, and consuming messages from topics
+- **PyFlink Table API** - Defining schemas, creating Kafka source/PostgreSQL sink DDLs, and running streaming SQL jobs
+- **Windowed aggregations** - TUMBLE windows (fixed 5-min intervals) for trip counts and SESSION windows (gap-based) for session analysis
+- **Watermarks and event time** - Defining watermarks via computed columns to handle late-arriving events
+- **JDBC sink connector** - Writing Flink results to PostgreSQL tables using the Flink JDBC connector
+- **End-to-end streaming pipeline** - Producer → Redpanda → Flink job → PostgreSQL, all orchestrated with Docker Compose
+
+**Key deliverables:**
+- [Homework 07](07-streaming/homework07/homework07.md) - Streaming exercises with Redpanda, kafka-python, and PyFlink ✅
+- Workshop stack: Docker Compose environment with Redpanda, Flink JobManager + TaskManager, and PostgreSQL
+- Green Taxi October 2025 dataset (49,416 trips) streamed and windowed in real time
+
+**Technologies used:** Redpanda, Apache Flink (PyFlink), Kafka-Python, PostgreSQL, Docker Compose, Python, Parquet
+
+**Streaming Pipeline Highlights:**
+| Component | Role | Key Detail |
+|-----------|------|-----------|
+| Redpanda | Message broker | Kafka-compatible, `v25.3.9`, `green-trips` topic |
+| kafka-python KafkaProducer | Data ingestion | JSON-serialized rows, ~2.92 s for full dataset |
+| PyFlink Table API | Stream processing | SQL-based windowed aggregations |
+| TUMBLE(5 min) window | Trip count per zone | PULocationID 74 — 15 trips (top zone) |
+| SESSION(5 min gap) window | Session analysis | Longest session: 81 trips for PULocationID 74 |
+| PostgreSQL JDBC sink | Result storage | Flink writes aggregated results to DB tables |
+
+**Key Learning:**
+Module 7 demonstrated how real-time streaming pipelines differ from batch jobs: events are processed continuously as they arrive, windowing (TUMBLE and SESSION) replaces GROUP BY on static data, and watermarks control how late events are handled. Redpanda's Kafka-compatible API made it easy to reuse standard kafka-python clients while keeping the broker lightweight. PyFlink's Table API enables declarative SQL over streaming data, bridging the gap between familiar batch SQL and low-latency stream processing.
